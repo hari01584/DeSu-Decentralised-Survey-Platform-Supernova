@@ -1,0 +1,14 @@
+type Survey = 
+ record {
+   desc: text;
+   id: opt text;
+   questions: vec Question;
+ };
+type Question = 
+ record {
+   id: text;
+   "text": text;
+ };
+service : {
+  createSurveyRecord: (Survey) -> ();
+}

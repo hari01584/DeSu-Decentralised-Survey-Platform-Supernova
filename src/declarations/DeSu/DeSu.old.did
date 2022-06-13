@@ -1,0 +1,9 @@
+type Survey = 
+ record {
+   cause: text;
+   id: text;
+   questions: text;
+ };
+service : {
+  greet: (Survey) -> ();
+}
