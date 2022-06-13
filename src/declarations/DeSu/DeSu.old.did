@@ -1,9 +1,17 @@
 type Survey = 
  record {
-   cause: text;
+   desc: text;
+   id: opt text;
+   participants: opt nat;
+   questions: vec Question;
+   stake: opt nat;
+ };
+type Question = 
+ record {
    id: text;
-   questions: text;
+   "text": text;
  };
 service : {
-  greet: (Survey) -> ();
+  createSurveyRecord: (Survey) -> ();
+  init: () -> ();
 }
