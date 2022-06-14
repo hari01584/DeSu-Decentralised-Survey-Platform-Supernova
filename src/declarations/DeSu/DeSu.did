@@ -14,21 +14,22 @@ type Token =
    transferFrom: (principal, principal, nat) -> (bool);
    wallet_receive: () -> (record {accepted: nat64;});
  };
-type Survey = 
+type SurveyCreateData = 
  record {
    desc: text;
-   id: opt text;
    participants: opt nat;
-   questions: vec Question;
+   questions: vec QuestionData;
    stake: opt nat;
  };
-type Question = 
+type Survey = record {};
+type QuestionData = 
  record {
    id: text;
    "text": text;
  };
 service : {
-  createSurveyRecord: (Survey) -> ();
+  createSurveyRecord: (SurveyCreateData) -> (text);
+  getSurveyRecord: (text) -> (Survey) query;
   getToken: () -> (Token);
   init: () -> ();
 }

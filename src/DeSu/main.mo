@@ -12,6 +12,9 @@ import Cycles "mo:base/ExperimentalCycles";
 
 import samplecycle "erc20/samplecycle";
 import Error "mo:base/Error";
+import Map "mo:base/HashMap";
+
+import Text "mo:base/Text";
 
 actor {
   var isInit : Bool = false;
@@ -27,7 +30,7 @@ actor {
 
     if(Option.isNull(DSX)){
       D.print("Creating new coin DSX");
-      let canisterInstance = await ERC20.Token("DeSuX", "DSX", 6, 1000, msg.caller);
+      let canisterInstance = await ERC20.Token("DeSuX", "DSX", 6, 10000000, msg.caller);
       let amountAccepted = await canisterInstance.wallet_receive(); // Accept some cycles for creation
       DSX := Option.make(canisterInstance);
     }
@@ -54,7 +57,30 @@ actor {
     Survey Records Methods Ahead.
   */
 
-  public shared(msg) func createSurveyRecord(record : T.Survey) : async () {
-    D.print(debug_show(record));
+  // Survey HashMap (TODO: Make it stable and persistent)
+  let surveys = Map.HashMap<Text, C.Survey>(0, Text.equal, Text.hash);
+
+  public shared(msg) func createSurveyRecord(record : T.SurveyCreateData) : async Text {
+    // Generate random id from util
+    let id : Text = await U.generateRandomId(msg.caller);
+
+    // Generate instance of survey
+    let survey : C.Survey = C.Survey(id, msg.caller, record);
+
+    // Add to our list of surveys
+    surveys.put(id, survey);
+
+    // Debug show survey
+    D.print(debug_show(survey));
+
+    // Return Unique ID
+    return id;
   };
+
+  public query func getSurveyRecord(id : Text) : async C.Survey {
+    switch (surveys.get(id)) {
+      case null throw Error.reject("Not Found");
+      case (?z) return z;
+    };
+  }
 };

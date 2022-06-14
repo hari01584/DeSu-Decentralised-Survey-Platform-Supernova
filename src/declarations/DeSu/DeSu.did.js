@@ -1,12 +1,12 @@
 export const idlFactory = ({ IDL }) => {
-  const Question = IDL.Record({ 'id' : IDL.Text, 'text' : IDL.Text });
-  const Survey = IDL.Record({
-    'id' : IDL.Opt(IDL.Text),
+  const QuestionData = IDL.Record({ 'id' : IDL.Text, 'text' : IDL.Text });
+  const SurveyCreateData = IDL.Record({
     'participants' : IDL.Opt(IDL.Nat),
     'desc' : IDL.Text,
     'stake' : IDL.Opt(IDL.Nat),
-    'questions' : IDL.Vec(Question),
+    'questions' : IDL.Vec(QuestionData),
   });
+  const Survey = IDL.Record({});
   const Token = IDL.Service({
     'allowance' : IDL.Func(
         [IDL.Principal, IDL.Principal],
@@ -35,7 +35,8 @@ export const idlFactory = ({ IDL }) => {
       ),
   });
   return IDL.Service({
-    'createSurveyRecord' : IDL.Func([Survey], [], []),
+    'createSurveyRecord' : IDL.Func([SurveyCreateData], [IDL.Text], []),
+    'getSurveyRecord' : IDL.Func([IDL.Text], [Survey], ['query']),
     'getToken' : IDL.Func([], [Token], []),
     'init' : IDL.Func([], [], []),
   });

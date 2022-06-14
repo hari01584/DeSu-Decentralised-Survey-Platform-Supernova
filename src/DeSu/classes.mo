@@ -5,8 +5,8 @@ import Principal "mo:base/Principal";
 
 module {
     // Survey class, records everything related to survey and defines functions that can be called on them.
-    class Survey(data : T.Survey){
-        let surveyId = data.id;
+    public class Survey(id : Text, owner: Principal, createData : T.SurveyCreateData){
+        let surveyId = id;
         
     }
 

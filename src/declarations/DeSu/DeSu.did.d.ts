@@ -1,13 +1,13 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
-export interface Question { 'id' : string, 'text' : string }
-export interface Survey {
-  'id' : [] | [string],
+export interface QuestionData { 'id' : string, 'text' : string }
+export type Survey = {};
+export interface SurveyCreateData {
   'participants' : [] | [bigint],
   'desc' : string,
   'stake' : [] | [bigint],
-  'questions' : Array<Question>,
+  'questions' : Array<QuestionData>,
 }
 export interface Token {
   'allowance' : ActorMethod<[Principal, Principal], bigint>,
@@ -25,7 +25,8 @@ export interface Token {
   'wallet_receive' : ActorMethod<[], { 'accepted' : bigint }>,
 }
 export interface _SERVICE {
-  'createSurveyRecord' : ActorMethod<[Survey], undefined>,
+  'createSurveyRecord' : ActorMethod<[SurveyCreateData], string>,
+  'getSurveyRecord' : ActorMethod<[string], Survey>,
   'getToken' : ActorMethod<[], Principal>,
   'init' : ActorMethod<[], undefined>,
 }
