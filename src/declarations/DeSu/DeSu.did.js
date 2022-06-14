@@ -6,7 +6,13 @@ export const idlFactory = ({ IDL }) => {
     'stake' : IDL.Opt(IDL.Nat),
     'questions' : IDL.Vec(QuestionData),
   });
-  const Survey = IDL.Record({});
+  const AnswerData = IDL.Record({ 'id' : IDL.Text, 'ans' : IDL.Text });
+  const Survey = IDL.Record({
+    'id' : IDL.Text,
+    'owner' : IDL.Principal,
+    'data' : SurveyCreateData,
+    'answers' : IDL.Vec(AnswerData),
+  });
   const Token = IDL.Service({
     'allowance' : IDL.Func(
         [IDL.Principal, IDL.Principal],
@@ -39,6 +45,7 @@ export const idlFactory = ({ IDL }) => {
     'getSurveyRecord' : IDL.Func([IDL.Text], [Survey], ['query']),
     'getToken' : IDL.Func([], [Token], []),
     'init' : IDL.Func([], [], []),
+    'insertAnswerFor' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
   });
 };
 export const init = ({ IDL }) => { return []; };

@@ -28,8 +28,8 @@ type QuestionData =
    "text": text;
  };
 service : {
-  createSurveyRecord: (SurveyCreateData) -> ();
-  getSurveyRecord: (text) -> (opt Survey) query;
+  createSurveyRecord: (SurveyCreateData) -> (text);
+  getSurveyRecord: (text) -> (Survey) query;
   getToken: () -> (Token);
   init: () -> ();
 }

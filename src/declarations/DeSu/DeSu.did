@@ -21,15 +21,27 @@ type SurveyCreateData =
    questions: vec QuestionData;
    stake: opt nat;
  };
-type Survey = record {};
+type Survey = 
+ record {
+   answers: vec AnswerData;
+   data: SurveyCreateData;
+   id: text;
+   owner: principal;
+ };
 type QuestionData = 
  record {
    id: text;
    "text": text;
+ };
+type AnswerData = 
+ record {
+   ans: text;
+   id: text;
  };
 service : {
   createSurveyRecord: (SurveyCreateData) -> (text);
   getSurveyRecord: (text) -> (Survey) query;
   getToken: () -> (Token);
   init: () -> ();
+  insertAnswerFor: (text) -> (bool) query;
 }

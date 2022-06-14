@@ -11,15 +11,21 @@ module {
         participants : ?Nat;
     };
 
-    public type AnswerData = {
-        id : Text;
+    public type AnswerUnit = {
+        qid : Text;
         ans : Text;
     };
 
-    public type SurveyHeader = {
+    public type AnswerData = {
         id : Text;
         owner : Principal;
-        surveydata : SurveyCreateData;
+        ans : [AnswerUnit];
+    };
+
+    public type Survey = {
+        id : Text;
+        owner : Principal;
+        data : SurveyCreateData;
         answers : [AnswerData];
     };
 };

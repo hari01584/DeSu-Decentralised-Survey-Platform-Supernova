@@ -58,14 +58,14 @@ actor {
   */
 
   // Survey HashMap (TODO: Make it stable and persistent)
-  let surveys = Map.HashMap<Text, C.Survey>(0, Text.equal, Text.hash);
+  let surveys = Map.HashMap<Text, T.Survey>(0, Text.equal, Text.hash);
 
   public shared(msg) func createSurveyRecord(record : T.SurveyCreateData) : async Text {
     // Generate random id from util
     let id : Text = await U.generateRandomId(msg.caller);
 
     // Generate instance of survey
-    let survey : C.Survey = C.Survey(id, msg.caller, record);
+    let survey : T.Survey = U.createSurvey(id, msg.caller, record);
 
     // Add to our list of surveys
     surveys.put(id, survey);
@@ -77,10 +77,22 @@ actor {
     return id;
   };
 
-  public query func getSurveyRecord(id : Text) : async C.Survey {
+  public query func getSurveyRecord(id : Text) : async T.Survey {
     switch (surveys.get(id)) {
       case null throw Error.reject("Not Found");
       case (?z) return z;
     };
-  }
+  };
+
+  public query func insertAnswerFor(id : Text, answer : T.AnswerData) : async Bool {
+    // TODO: fetch from survey record and insert answer
+    // Also insert checks to make sure answer and question structure match
+    return false;
+  };
+
+  public query func fetchAllAnswersFor(id : Text) : async [T.AnswerData] {
+    // TODO: fetch all answers
+    return [];
+  };
+
 };

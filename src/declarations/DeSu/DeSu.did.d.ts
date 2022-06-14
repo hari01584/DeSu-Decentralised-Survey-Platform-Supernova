@@ -1,8 +1,14 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
+export interface AnswerData { 'id' : string, 'ans' : string }
 export interface QuestionData { 'id' : string, 'text' : string }
-export type Survey = {};
+export interface Survey {
+  'id' : string,
+  'owner' : Principal,
+  'data' : SurveyCreateData,
+  'answers' : Array<AnswerData>,
+}
 export interface SurveyCreateData {
   'participants' : [] | [bigint],
   'desc' : string,
@@ -29,4 +35,5 @@ export interface _SERVICE {
   'getSurveyRecord' : ActorMethod<[string], Survey>,
   'getToken' : ActorMethod<[], Principal>,
   'init' : ActorMethod<[], undefined>,
+  'insertAnswerFor' : ActorMethod<[string], boolean>,
 }
