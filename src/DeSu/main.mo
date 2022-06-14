@@ -11,7 +11,7 @@ import Option "mo:base/Option";
 import Cycles "mo:base/ExperimentalCycles";
 
 import samplecycle "erc20/samplecycle";
-
+import Error "mo:base/Error";
 
 actor {
   var isInit : Bool = false;
@@ -25,12 +25,34 @@ actor {
 
     Cycles.add(1000000000000);
 
-    // Create private ERC20 token
-    let canisterInstance = await ERC20.Token("DeSuX", "DSX", 6, 1000, msg.caller);
-    let amountAccepted = await canisterInstance.wallet_receive(); // Accept some cycles for creation
+    if(Option.isNull(DSX)){
+      D.print("Creating new coin DSX");
+      let canisterInstance = await ERC20.Token("DeSuX", "DSX", 6, 1000, msg.caller);
+      let amountAccepted = await canisterInstance.wallet_receive(); // Accept some cycles for creation
+      DSX := Option.make(canisterInstance);
+    }
+    else {
+      D.print("DSX Working");
+    };
 
     isInit := true; // Everything properly initialized
   };
+
+  /*
+    Token Interfacing Methods Ahead.
+  */
+
+  // Gets the currently initilized token!
+  public func getToken() : async ERC20.Token {
+    switch DSX {
+      case null throw Error.reject("Not Found");
+      case (?int) return int;
+    };
+  };
+
+  /*
+    Survey Records Methods Ahead.
+  */
 
   public shared(msg) func createSurveyRecord(record : T.Survey) : async () {
     D.print(debug_show(record));

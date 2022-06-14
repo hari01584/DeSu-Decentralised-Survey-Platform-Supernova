@@ -1,3 +1,19 @@
+type Token = 
+ service {
+   allowance: (principal, principal) -> (nat) query;
+   approve: (principal, nat) -> (bool);
+   balanceOf: (principal) -> (nat) query;
+   burn: (principal, nat) -> (bool);
+   decimals: () -> (nat) query;
+   mint: (principal, nat) -> (bool);
+   name: () -> (text) query;
+   owner: () -> (principal) query;
+   symbol: () -> (text) query;
+   totalSupply: () -> (nat) query;
+   transfer: (principal, nat) -> (bool);
+   transferFrom: (principal, principal, nat) -> (bool);
+   wallet_receive: () -> (record {accepted: nat64;});
+ };
 type Survey = 
  record {
    desc: text;
@@ -13,5 +29,6 @@ type Question =
  };
 service : {
   createSurveyRecord: (Survey) -> ();
+  getToken: () -> (Token);
   init: () -> ();
 }
