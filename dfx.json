@@ -4,16 +4,16 @@
       "main": "src/DeSu/main.mo",
       "type": "motoko"
     },
-    "DeSu_assets": {
+    "www": {
       "dependencies": [
         "DeSu"
       ],
       "frontend": {
-        "entrypoint": "src/DeSu_assets/src/index.html"
+        "entrypoint": "src/www/src/index.html"
       },
       "source": [
-        "src/DeSu_assets/assets",
-        "dist/DeSu_assets/"
+        "src/www/assets",
+        "dist/www/"
       ],
       "type": "assets"
     }
