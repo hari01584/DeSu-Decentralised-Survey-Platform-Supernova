@@ -28,4 +28,20 @@ module {
         data : SurveyCreateData;
         answers : [AnswerData];
     };
+
+    /*
+        types for user data
+    */
+    public type Country = {#US; #INDIA; #NIGERIA; #JAPAN};
+    public type Age = Int;
+
+    public type UserDemographicInput = {
+        country : Country;
+        age : Age;
+    };
+
+    public type UserDemographic = {
+        user : Principal;
+        data : UserDemographicInput;
+    };
 };

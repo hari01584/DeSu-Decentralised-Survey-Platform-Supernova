@@ -1,7 +1,17 @@
 import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
-export interface AnswerData { 'id' : string, 'ans' : string }
+export type Age = bigint;
+export interface AnswerData {
+  'id' : string,
+  'ans' : Array<AnswerUnit>,
+  'owner' : Principal,
+}
+export interface AnswerUnit { 'ans' : string, 'qid' : string }
+export type Country = { 'US' : null } |
+  { 'INDIA' : null } |
+  { 'JAPAN' : null } |
+  { 'NIGERIA' : null };
 export interface QuestionData { 'id' : string, 'text' : string }
 export interface Survey {
   'id' : string,
@@ -30,10 +40,18 @@ export interface Token {
   'transferFrom' : ActorMethod<[Principal, Principal, bigint], boolean>,
   'wallet_receive' : ActorMethod<[], { 'accepted' : bigint }>,
 }
+export interface UserDemographic {
+  'data' : UserDemographicInput,
+  'user' : Principal,
+}
+export interface UserDemographicInput { 'age' : Age, 'country' : Country }
 export interface _SERVICE {
+  'createDemographicRecord' : ActorMethod<[UserDemographicInput], undefined>,
   'createSurveyRecord' : ActorMethod<[SurveyCreateData], string>,
+  'fetchAllAnswersFor' : ActorMethod<[string], Array<AnswerData>>,
+  'fetchDemographicRecord' : ActorMethod<[], [] | [UserDemographic]>,
   'getSurveyRecord' : ActorMethod<[string], Survey>,
   'getToken' : ActorMethod<[], Principal>,
   'init' : ActorMethod<[], undefined>,
-  'insertAnswerFor' : ActorMethod<[string], boolean>,
+  'insertAnswerFor' : ActorMethod<[string, AnswerData], boolean>,
 }

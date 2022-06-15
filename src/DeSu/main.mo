@@ -10,7 +10,6 @@ import ERC20 "erc20/token";
 import Option "mo:base/Option";
 import Cycles "mo:base/ExperimentalCycles";
 
-import samplecycle "erc20/samplecycle";
 import Error "mo:base/Error";
 import Map "mo:base/HashMap";
 
@@ -22,9 +21,13 @@ actor {
   let null_address : Principal = Principal.fromText("aaaaa-aa");
 
   stable var DSX : ?ERC20.Token = null;
-  
+  stable var Manager: Principal = null_address;
+
   public shared(msg) func init() : async (){
     assert (isInit == false); // Check if initialized before, throws error
+
+    // Set manager to the initilizer
+    Manager := msg.caller;
 
     Cycles.add(1000000000000);
 
@@ -61,6 +64,9 @@ actor {
   let surveys = Map.HashMap<Text, T.Survey>(0, Text.equal, Text.hash);
 
   public shared(msg) func createSurveyRecord(record : T.SurveyCreateData) : async Text {
+    // TODO: Logic for checking if user wallet contains enough balance for staking
+    await U.checkAndRemoveCrypto(msg.caller, record.stake, DSX, Manager);
+
     // Generate random id from util
     let id : Text = await U.generateRandomId(msg.caller);
 
@@ -84,7 +90,7 @@ actor {
     };
   };
 
-  public query func insertAnswerFor(id : Text, answer : T.AnswerData) : async Bool {
+  public func insertAnswerFor(id : Text, answer : T.AnswerData) : async Bool {
     // TODO: fetch from survey record and insert answer
     // Also insert checks to make sure answer and question structure match
     return false;
@@ -93,6 +99,31 @@ actor {
   public query func fetchAllAnswersFor(id : Text) : async [T.AnswerData] {
     // TODO: fetch all answers
     return [];
+  };
+
+
+  /*
+    Wallet/Personal Data Collection.
+  */
+
+  // Survey HashMap (TODO: Make it stable and persistent)
+  let userData = Map.HashMap<Principal, T.UserDemographic>(0, Principal.equal, Principal.hash);
+
+  // Create demographic record using input type
+  public shared(msg) func createDemographicRecord(recordinp : T.UserDemographicInput) : async () {
+    let record : T.UserDemographic = {
+      user = msg.caller;
+      data = recordinp;
+    };
+    switch (userData.get(msg.caller)) {
+      case null userData.put(msg.caller, record);
+      case (?z) throw Error.reject("Already recorded data for this user.");
+    };
+  };
+
+  // Fetching demographic record
+  public shared query(msg) func fetchDemographicRecord() : async ?T.UserDemographic {
+    return userData.get(msg.caller);
   };
 
 };

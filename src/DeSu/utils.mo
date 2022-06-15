@@ -4,6 +4,9 @@ import Nat32 "mo:base/Nat32";
 import D "mo:base/Debug";
 import Principal "mo:base/Principal";
 import HashMap "mo:base/HashMap";
+import ERC20 "erc20/token";
+
+import Error "mo:base/Error";
 
 import T "types";
 
@@ -18,7 +21,7 @@ module {
         return uniqueId;
     };
 
-    public func createSurvey(uid : Text, own: Principal, createData : T.SurveyCreateData) : T.Survey{
+    public func createSurvey(uid : Text, own: Principal, createData : T.SurveyCreateData) : T.Survey{        
         // Create Survey with no answers.
         let ans : [T.AnswerData] = [];
         let survey : T.Survey = {
@@ -28,5 +31,32 @@ module {
             answers = ans;
         };
         return survey;
-    }
+    };
+
+    public func checkAndRemoveCrypto(own : Principal, denom : ?Nat, token : ?ERC20.Token, manager : Principal) : async () {
+        let d = switch denom {
+            case null return;
+            case (?int) int;
+        };
+
+        let t : ERC20.Token = switch token {
+            case null throw Error.reject("Token not found");
+            case (?z) z;
+        };
+
+        // Check zero or negative denomination, ie bad case;
+        if(d <= 0) throw Error.reject("bad stake");
+
+        // Get user wallet balance
+        let userBal : Nat = await t.balanceOf(own);
+
+        // Not sufficient balance
+        if(userBal < d) throw Error.reject("Balance not sufficient");
+
+        // Status transfer
+        let status : Bool = await t.transferFrom(own, manager, d);
+        
+        // TODO: This fails somehow in candid interface testing, look back later.
+        assert (status == true);
+    };
 }

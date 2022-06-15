@@ -1,4 +1,12 @@
 export const idlFactory = ({ IDL }) => {
+  const Age = IDL.Int;
+  const Country = IDL.Variant({
+    'US' : IDL.Null,
+    'INDIA' : IDL.Null,
+    'JAPAN' : IDL.Null,
+    'NIGERIA' : IDL.Null,
+  });
+  const UserDemographicInput = IDL.Record({ 'age' : Age, 'country' : Country });
   const QuestionData = IDL.Record({ 'id' : IDL.Text, 'text' : IDL.Text });
   const SurveyCreateData = IDL.Record({
     'participants' : IDL.Opt(IDL.Nat),
@@ -6,7 +14,16 @@ export const idlFactory = ({ IDL }) => {
     'stake' : IDL.Opt(IDL.Nat),
     'questions' : IDL.Vec(QuestionData),
   });
-  const AnswerData = IDL.Record({ 'id' : IDL.Text, 'ans' : IDL.Text });
+  const AnswerUnit = IDL.Record({ 'ans' : IDL.Text, 'qid' : IDL.Text });
+  const AnswerData = IDL.Record({
+    'id' : IDL.Text,
+    'ans' : IDL.Vec(AnswerUnit),
+    'owner' : IDL.Principal,
+  });
+  const UserDemographic = IDL.Record({
+    'data' : UserDemographicInput,
+    'user' : IDL.Principal,
+  });
   const Survey = IDL.Record({
     'id' : IDL.Text,
     'owner' : IDL.Principal,
@@ -41,11 +58,22 @@ export const idlFactory = ({ IDL }) => {
       ),
   });
   return IDL.Service({
+    'createDemographicRecord' : IDL.Func([UserDemographicInput], [], []),
     'createSurveyRecord' : IDL.Func([SurveyCreateData], [IDL.Text], []),
+    'fetchAllAnswersFor' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(AnswerData)],
+        ['query'],
+      ),
+    'fetchDemographicRecord' : IDL.Func(
+        [],
+        [IDL.Opt(UserDemographic)],
+        ['query'],
+      ),
     'getSurveyRecord' : IDL.Func([IDL.Text], [Survey], ['query']),
     'getToken' : IDL.Func([], [Token], []),
     'init' : IDL.Func([], [], []),
-    'insertAnswerFor' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+    'insertAnswerFor' : IDL.Func([IDL.Text, AnswerData], [IDL.Bool], []),
   });
 };
 export const init = ({ IDL }) => { return []; };
