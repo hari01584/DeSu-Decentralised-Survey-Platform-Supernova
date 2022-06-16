@@ -69,6 +69,8 @@ service : {
   fetchDemographicRecord: () -> (opt UserDemographic) query;
   getSurveyRecord: (text) -> (Survey) query;
   getToken: () -> (Token);
+  greet: () -> (text) query;
   init: () -> ();
   insertAnswerFor: (text, AnswerData) -> (bool);
+  whoami: () -> (principal) query;
 }

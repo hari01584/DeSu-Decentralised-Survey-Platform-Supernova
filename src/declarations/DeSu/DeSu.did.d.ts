@@ -52,6 +52,8 @@ export interface _SERVICE {
   'fetchDemographicRecord' : ActorMethod<[], [] | [UserDemographic]>,
   'getSurveyRecord' : ActorMethod<[string], Survey>,
   'getToken' : ActorMethod<[], Principal>,
+  'greet' : ActorMethod<[], string>,
   'init' : ActorMethod<[], undefined>,
   'insertAnswerFor' : ActorMethod<[string, AnswerData], boolean>,
+  'whoami' : ActorMethod<[], Principal>,
 }

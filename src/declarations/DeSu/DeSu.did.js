@@ -72,8 +72,10 @@ export const idlFactory = ({ IDL }) => {
       ),
     'getSurveyRecord' : IDL.Func([IDL.Text], [Survey], ['query']),
     'getToken' : IDL.Func([], [Token], []),
+    'greet' : IDL.Func([], [IDL.Text], ['query']),
     'init' : IDL.Func([], [], []),
     'insertAnswerFor' : IDL.Func([IDL.Text, AnswerData], [IDL.Bool], []),
+    'whoami' : IDL.Func([], [IDL.Principal], ['query']),
   });
 };
 export const init = ({ IDL }) => { return []; };

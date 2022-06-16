@@ -3,13 +3,29 @@ import { DeSu } from "../../declarations/DeSu";
 import * as React from "react";
 import { render } from "react-dom";
 
+import { Actor, HttpAgent } from "@dfinity/agent";
+import { AuthClient } from "@dfinity/auth-client";
+
 const MyHello = () => {
   const [name, setName] = React.useState('');
   const [message, setMessage] = React.useState('');
 
   async function doGreet() {
-    const greeting = await DeSu.greet(name);
+    const greeting = await DeSu.greet();
     setMessage(greeting);
+
+    const authClient = await AuthClient.create();
+    const canisterId = "sp3hj-caaaa-aaaaa-aaajq-cai&id=si2b5-pyaaa-aaaaa-aaaja-cai";
+    const iiUrl = `http://localhost:8000/?canisterId=${canisterId}`;
+
+    await new Promise((resolve, reject) => {
+      authClient.login({
+        identityProvider: iiUrl,
+        onSuccess: resolve,
+        onError: reject,
+      });
+    });
+  
   }
 
   return (

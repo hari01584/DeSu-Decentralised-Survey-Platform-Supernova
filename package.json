@@ -1,5 +1,5 @@
 {
-  "name": "DeSu_assets",
+  "name": "www",
   "version": "0.1.0",
   "description": "Internet Computer starter application",
   "keywords": [
@@ -16,7 +16,7 @@
     "copy:types": "rsync -avr .dfx/$(echo ${DFX_NETWORK:-'**'})/canisters/** --exclude='assets/' --exclude='idl/' --exclude='*.wasm' --exclude='*.most' --delete src/declarations"
   },
   "devDependencies": {
-    "@dfinity/agent": "0.11.3",
+    "@dfinity/agent": "^0.11.3",
     "@dfinity/candid": "0.11.3",
     "@dfinity/principal": "0.11.3",
     "assert": "2.0.0",
@@ -31,7 +31,7 @@
     "typescript": "^4.7.3",
     "util": "0.12.4",
     "webpack": "5.72.0",
-    "webpack-cli": "4.9.2",
+    "webpack-cli": "4.10.0",
     "webpack-dev-server": "^4.8.1"
   },
   "engines": {
@@ -44,6 +44,8 @@
     "last 2 edge version"
   ],
   "dependencies": {
+    "@dfinity/auth-client": "^0.11.3",
+    "@internet-identity-labs/react-ic-ii-auth": "^0.0.19",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   }

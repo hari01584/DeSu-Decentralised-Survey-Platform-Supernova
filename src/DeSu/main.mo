@@ -126,4 +126,15 @@ actor {
     return userData.get(msg.caller);
   };
 
+
+  /*
+    Misc
+  */
+  public shared query(msg) func whoami() : async Principal {
+    return msg.caller;
+  };
+
+  public shared query(msg) func greet() : async Text {
+    return "Hello " # Principal.toText(msg.caller);
+  };
 };
