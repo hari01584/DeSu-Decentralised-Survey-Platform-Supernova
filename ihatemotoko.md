@@ -7,3 +7,6 @@ _Deposit to canister (local)_
 _Compile locally to check syntax/etc_
 
     (dfx cache show)/moc Shopping.mo --package base $(dfx cache show)/base
+
+_List canister ids deployed_
+    cat .dfx/local/canister_ids.json

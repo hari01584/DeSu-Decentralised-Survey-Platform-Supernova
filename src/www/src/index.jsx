@@ -11,11 +11,8 @@ const MyHello = () => {
   const [message, setMessage] = React.useState('');
 
   async function doGreet() {
-    const greeting = await DeSu.greet();
-    setMessage(greeting);
-
     const authClient = await AuthClient.create();
-    const canisterId = "sp3hj-caaaa-aaaaa-aaajq-cai&id=si2b5-pyaaa-aaaaa-aaaja-cai";
+    const canisterId = process.env.II_CANISTER_ID;
     const iiUrl = `http://localhost:8000/?canisterId=${canisterId}`;
 
     await new Promise((resolve, reject) => {
@@ -26,6 +23,10 @@ const MyHello = () => {
       });
     });
   
+    const identity = authClient.getIdentity();
+
+    const greeting = await DeSu.greet();
+    setMessage(greeting);
   }
 
   return (
