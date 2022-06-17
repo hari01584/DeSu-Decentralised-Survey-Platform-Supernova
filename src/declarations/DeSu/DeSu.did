@@ -1,0 +1,76 @@
+type UserDemographicInput = 
+ record {
+   age: Age;
+   country: Country;
+ };
+type UserDemographic = 
+ record {
+   data: UserDemographicInput;
+   user: principal;
+ };
+type Token = 
+ service {
+   allowance: (principal, principal) -> (nat) query;
+   approve: (principal, nat) -> (bool);
+   balanceOf: (principal) -> (nat) query;
+   burn: (principal, nat) -> (bool);
+   decimals: () -> (nat) query;
+   mint: (principal, nat) -> (bool);
+   name: () -> (text) query;
+   owner: () -> (principal) query;
+   symbol: () -> (text) query;
+   totalSupply: () -> (nat) query;
+   transfer: (principal, nat) -> (bool);
+   transferFrom: (principal, principal, nat) -> (bool);
+   wallet_receive: () -> (record {accepted: nat64;});
+ };
+type SurveyCreateData = 
+ record {
+   desc: text;
+   participants: opt nat;
+   questions: vec QuestionData;
+   stake: opt nat;
+ };
+type Survey = 
+ record {
+   answers: vec AnswerData;
+   data: SurveyCreateData;
+   id: text;
+   owner: principal;
+ };
+type QuestionData = 
+ record {
+   id: text;
+   "text": text;
+ };
+type Country = 
+ variant {
+   INDIA;
+   JAPAN;
+   NIGERIA;
+   US;
+ };
+type AnswerUnit = 
+ record {
+   ans: text;
+   qid: text;
+ };
+type AnswerData = 
+ record {
+   ans: vec AnswerUnit;
+   id: text;
+   owner: principal;
+ };
+type Age = int;
+service : {
+  createDemographicRecord: (UserDemographicInput) -> ();
+  createSurveyRecord: (SurveyCreateData) -> (text);
+  fetchAllAnswersFor: (text) -> (vec AnswerData) query;
+  fetchDemographicRecord: () -> (opt UserDemographic) query;
+  getSurveyRecord: (text) -> (Survey) query;
+  getToken: () -> (Token);
+  greet: () -> (text) query;
+  init: () -> ();
+  insertAnswerFor: (text, AnswerData) -> (bool);
+  whoami: () -> (principal) query;
+}

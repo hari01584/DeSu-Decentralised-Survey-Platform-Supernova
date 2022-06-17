@@ -1,16 +1,19 @@
 {
   "canisters": {
     "DeSu": {
-      "main": "motoko/DeSu/main.mo",
+      "main": "src/DeSu/main.mo",
       "type": "motoko"
     },
     "wwwsite": {
       "dependencies": [
         "DeSu"
       ],
-      "frontend": "hah",
+      "frontend": {
+        "entrypoint": "src/www/src/index.html"
+      },
       "source": [
-        "build/"
+        "src/www/assets",
+        "dist/www/"
       ],
       "type": "assets"
     },
