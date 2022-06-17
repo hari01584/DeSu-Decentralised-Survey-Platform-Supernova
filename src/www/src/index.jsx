@@ -6,27 +6,21 @@ import { render } from "react-dom";
 import { Actor, HttpAgent } from "@dfinity/agent";
 import { AuthClient } from "@dfinity/auth-client";
 
-const MyHello = () => {
+import { startAuthflow, getAuthenticatedDeSu } from "./auth/ii.js";
+
+const App = () => {
   const [name, setName] = React.useState('');
   const [message, setMessage] = React.useState('');
 
   async function doGreet() {
-    const authClient = await AuthClient.create();
-    const canisterId = process.env.II_CANISTER_ID;
-    const iiUrl = `http://localhost:8000/?canisterId=${canisterId}`;
-
-    await new Promise((resolve, reject) => {
-      authClient.login({
-        identityProvider: iiUrl,
-        onSuccess: resolve,
-        onError: reject,
-      });
-    });
-  
-    const identity = authClient.getIdentity();
-
     const greeting = await DeSu.greet();
-    setMessage(greeting);
+    console.log(greeting);
+
+    await startAuthflow();
+
+    let actor = getAuthenticatedDeSu();
+    const greetingauth = await actor.greet();
+    console.log(greetingauth);
   }
 
   return (
@@ -55,4 +49,4 @@ const MyHello = () => {
   );
 };
 
-render(<MyHello />, document.getElementById("app"));
+render(<App />, document.getElementById("app"));
