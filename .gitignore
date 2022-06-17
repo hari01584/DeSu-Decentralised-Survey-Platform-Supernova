@@ -3,6 +3,8 @@
 .idea/
 **/*~
 
+build/
+
 # Mac OSX temporary files
 .DS_Store
 **/.DS_Store
