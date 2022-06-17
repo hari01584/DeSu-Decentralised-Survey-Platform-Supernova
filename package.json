@@ -1,54 +1,80 @@
 {
-  "name": "www",
-  "version": "0.1.0",
-  "description": "Internet Computer starter application",
-  "keywords": [
-    "Internet Computer",
-    "Motoko",
-    "JavaScript",
-    "Canister"
-  ],
-  "scripts": {
-    "build": "webpack",
-    "prebuild": "npm run copy:types",
-    "start": "webpack serve --mode development --env development",
-    "prestart": "npm run copy:types",
-    "copy:types": "rsync -avr .dfx/$(echo ${DFX_NETWORK:-'**'})/canisters/** --exclude='assets/' --exclude='idl/' --exclude='*.wasm' --exclude='*.most' --delete src/declarations"
+  "name": "material-dashboard-2-react",
+  "version": "2.1.0",
+  "private": true,
+  "author": "Creative Tim",
+  "license": "See license in https://www.creative-tim.com/license",
+  "description": "React version of Material Dashboard 2 by Creative Tim",
+  "bugs": {
+    "url": "https://github.com/creativetimofficial/material-dashboard-react/issues"
   },
-  "devDependencies": {
-    "@dfinity/agent": "^0.11.3",
-    "@dfinity/candid": "0.11.3",
-    "@dfinity/principal": "0.11.3",
-    "assert": "2.0.0",
-    "buffer": "6.0.3",
-    "copy-webpack-plugin": "^9.0.1",
-    "events": "3.3.0",
-    "html-webpack-plugin": "5.5.0",
-    "process": "0.11.10",
-    "stream-browserify": "3.0.0",
-    "terser-webpack-plugin": "5.2.5",
-    "ts-loader": "^9.3.0",
-    "typescript": "^4.7.3",
-    "util": "0.12.4",
-    "webpack": "5.72.0",
-    "webpack-cli": "4.10.0",
-    "webpack-dev-server": "^4.8.1"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/creativetimofficial/material-dashboard-react.git"
   },
   "engines": {
-    "node": "^12 || ^14 || ^16 || ^18"
+    "node": "14 || 15 || 16",
+    "npm": ">=6"
   },
-  "browserslist": [
-    "last 2 chrome version",
-    "last 2 firefox version",
-    "last 2 safari version",
-    "last 2 edge version"
-  ],
   "dependencies": {
-    "@dfinity/auth-client": "^0.11.3",
-    "@dfinity/authentication": "^0.11.3",
-    "@dfinity/identity": "^0.11.3",
-    "@internet-identity-labs/react-ic-ii-auth": "^0.0.19",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@emotion/cache": "11.7.1",
+    "@emotion/react": "11.7.1",
+    "@emotion/styled": "11.6.0",
+    "@mui/icons-material": "5.4.1",
+    "@mui/material": "5.4.1",
+    "@mui/styled-engine": "5.4.1",
+    "@testing-library/jest-dom": "5.16.2",
+    "@testing-library/react": "12.1.2",
+    "@testing-library/user-event": "13.5.0",
+    "chart.js": "3.4.1",
+    "chroma-js": "2.4.2",
+    "prop-types": "15.8.1",
+    "react": "17.0.2",
+    "react-chartjs-2": "3.0.4",
+    "react-dom": "17.0.2",
+    "react-github-btn": "1.2.1",
+    "react-router-dom": "6.2.1",
+    "react-scripts": "5.0.0",
+    "react-table": "7.7.0",
+    "stylis": "4.0.13",
+    "stylis-plugin-rtl": "2.1.1",
+    "web-vitals": "2.1.4",
+    "yup": "0.32.11"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install && npm start"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "eslint": "8.8.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "2.25.4",
+    "eslint-plugin-jsx-a11y": "6.5.1",
+    "eslint-plugin-prettier": "4.0.0",
+    "eslint-plugin-react": "7.28.0",
+    "eslint-plugin-react-hooks": "4.3.0",
+    "prettier": "2.5.1"
   }
 }
