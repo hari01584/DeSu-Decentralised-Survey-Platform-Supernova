@@ -45,6 +45,5 @@
   },
   "devDependencies": {
     "gh-pages": "^4.0.0"
-  },
-  "homepage": "http://chamatt.github.io/survey-web-app"
+  }
 }

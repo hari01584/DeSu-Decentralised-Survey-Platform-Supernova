@@ -9,8 +9,8 @@ import AuthContext from "../../contexts/auth";
 import axiosInstance from "../../services/api";
 import { URL_ROOT, URL_REGISTER } from "../../utils/constants";
 
-// import { Actor, HttpAgent } from "@dfinity/agent";
-import { AuthClient } from "@dfinity/auth-client";
+import { startAuthflow } from "../../integration/auth/ii";
+// import { AuthClient } from "@dfinity/auth-client";
 
 export default function SignIn({ history }) {
   const { setUser, user } = useContext(AuthContext);
@@ -19,31 +19,37 @@ export default function SignIn({ history }) {
   const [error, setError] = useState();
 
   const login = async (email, password) => {
-    try {
-      const response = await axiosInstance.post("/users/auth", {
-        email,
-        password
-      });
+    console.log("Hows it going");
 
-      axiosInstance.defaults.headers.common = {
-        Authorization: `Bearer ${response.data.token}`
-      };
+    let r = await startAuthflow(); // Start login
+    console.log(r);
+    console.log("Are we hrere");
 
-      const userData = {
-        ...user,
-        isLoggedIn: true,
-        data: response.data.user,
-        token: response.data.token
-      };
+    // try {
+    //   const response = await axiosInstance.post("/users/auth", {
+    //     email,
+    //     password
+    //   });
 
-      setUser(userData);
+    //   axiosInstance.defaults.headers.common = {
+    //     Authorization: `Bearer ${response.data.token}`
+    //   };
 
-      localStorage.setItem("user", JSON.stringify(userData));
+    //   const userData = {
+    //     ...user,
+    //     isLoggedIn: true,
+    //     data: response.data.user,
+    //     token: response.data.token
+    //   };
 
-      history.push(URL_ROOT);
-    } catch ({ response }) {
-      setError(response?.data?.message || "Unexpected error");
-    }
+    //   setUser(userData);
+
+    //   localStorage.setItem("user", JSON.stringify(userData));
+
+    //   history.push(URL_ROOT);
+    // } catch ({ response }) {
+    //   setError(response?.data?.message || "Unexpected error");
+    // }
   };
 
   const handleKeyPress = event => {
@@ -57,28 +63,6 @@ export default function SignIn({ history }) {
       <VectorContainer src={signin_vector}></VectorContainer>
       <Title>Sign In</Title>
       <Card>
-        <form className="col s12" onSubmit={() => login(email, password)}>
-          <Input
-            id="email"
-            name="email"
-            icon="mail_outline"
-            type="email"
-            label="Email"
-            value={email}
-            onChange={e => setError() || setEmail(e.target.value)}
-            onKeyPress={handleKeyPress}
-          ></Input>
-          <Input
-            id="password"
-            name="password"
-            icon="lock_outline"
-            type="password"
-            label="Password"
-            value={password}
-            onChange={e => setError() || setPassword(e.target.value)}
-            onKeyPress={handleKeyPress}
-          ></Input>
-        </form>
         <ErrorMessage>{error}</ErrorMessage>
         <SizedBox height="20px" />
         <Buttons>
