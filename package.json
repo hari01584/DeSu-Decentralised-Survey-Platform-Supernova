@@ -8,6 +8,7 @@
     "@testing-library/react": "^13.3.0",
     "@testing-library/user-event": "^14.2.1",
     "axios": "^0.27.2",
+    "dotenv": "^16.0.1",
     "lodash": "^4.17.21",
     "materialize-css": "^1.0.0",
     "react": "^18.2.0",
@@ -21,7 +22,7 @@
     "use-state-with-callback": "^3.0.2"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node buildenv.config.js && react-scripts start",
     "build": "react-scripts build && cp build/index.html build/404.html",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
@@ -44,6 +45,7 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^4.0.0"
+    "gh-pages": "^4.0.0",
+    "webpack-cli": "^4.10.0"
   }
 }

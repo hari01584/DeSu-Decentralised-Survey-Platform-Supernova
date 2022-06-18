@@ -9,7 +9,7 @@ import AuthContext from "../../contexts/auth";
 import axiosInstance from "../../services/api";
 import { URL_ROOT, URL_REGISTER } from "../../utils/constants";
 
-import { startAuthflow } from "../../integration/auth/ii";
+import { startAuthflow, getAuthenticatedDeSu } from "../../integration/auth/ii";
 // import { AuthClient } from "@dfinity/auth-client";
 
 export default function SignIn({ history }) {
@@ -25,31 +25,8 @@ export default function SignIn({ history }) {
     console.log(r);
     console.log("Are we hrere");
 
-    // try {
-    //   const response = await axiosInstance.post("/users/auth", {
-    //     email,
-    //     password
-    //   });
-
-    //   axiosInstance.defaults.headers.common = {
-    //     Authorization: `Bearer ${response.data.token}`
-    //   };
-
-    //   const userData = {
-    //     ...user,
-    //     isLoggedIn: true,
-    //     data: response.data.user,
-    //     token: response.data.token
-    //   };
-
-    //   setUser(userData);
-
-    //   localStorage.setItem("user", JSON.stringify(userData));
-
-    //   history.push(URL_ROOT);
-    // } catch ({ response }) {
-    //   setError(response?.data?.message || "Unexpected error");
-    // }
+    let actor = getAuthenticatedDeSu();
+    console.log(actor);
   };
 
   const handleKeyPress = event => {
