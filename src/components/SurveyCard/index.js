@@ -15,6 +15,8 @@ import { withRouter } from "react-router-dom";
 import AuthContext from "../../contexts/auth";
 import axiosInstace from "../../services/api";
 import SizedBox from "../../components/SizedBox";
+import { getNormalDeSu, getAuthenticatedDeSu } from "../../integration/auth/ii";
+
 import {
   COORDINATOR,
   IDLE,
@@ -22,7 +24,8 @@ import {
   URL_SURVEY,
   CLOSED,
   URL_SURVEYS,
-  URL_RESULTS
+  URL_RESULTS,
+  URL_LOGIN
 } from "../../utils/constants";
 import { toast } from "react-toastify";
 
@@ -39,9 +42,14 @@ const SurveyCard = ({
   const isActive = status?.toUpperCase() === ACTIVE;
   const isAdmin = user?.data?.role?.toUpperCase() === COORDINATOR;
   const changeSurveyStatus = status => {
-    return axiosInstace
-      .put(`${URL_SURVEYS}/status/` + surveyId, { status })
-      .then(refetchData);
+    let actor = getAuthenticatedDeSu();
+    if(!actor){
+      history.push(URL_LOGIN);
+    }
+    return actor.setSurveyStatus(surveyId, status==CLOSED);
+    // return axiosInstace
+    //   .put(`${URL_SURVEYS}/status/` + surveyId, { status })
+    //   .then(refetchData);
   };
 
   const handleChangeStatusToActive = () => {
@@ -51,7 +59,7 @@ const SurveyCard = ({
   };
   const handleChangeStatusToClosed = () => {
     changeSurveyStatus(CLOSED)
-      .then(() => toast.success("Survey moved to closed."))
+      .then(() => {toast.success("Survey moved to closed."); refetchData(); })
       .catch(() => toast.error("Error moving survey to closed."));
   };
 

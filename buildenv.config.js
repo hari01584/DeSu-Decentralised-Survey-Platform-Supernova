@@ -39,4 +39,5 @@ ENV_TEXT = "NODE_ENV="+process.env.NODE_ENV+"\n";
 for(v in variables){
     ENV_TEXT += "REACT_APP_" + v + "=" + variables[v] + "\n";
 }
+// console.log(ENV_TEXT);
 fs.writeFileSync(".env", ENV_TEXT);

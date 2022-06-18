@@ -1,5 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from "react";
+import { startAuthflow, getAuthenticatedDeSu } from "../../integration/auth/ii";
 
 import {
   Container,
@@ -28,6 +29,7 @@ import api from "../../services/api";
 import { toast } from "react-toastify";
 import {
   URL_ROOT,
+  URL_LOGIN,
   URL_SURVEYS,
   ACTIVE,
   IDLE,
@@ -157,18 +159,49 @@ export default function CreateSurvey({ history }) {
       return;
     }
 
-    api
-      .post("/surveys", requestBody)
-      .then(() => {
-        toast.success("☑ Survey created successfuly!");
-        history.push(URL_ROOT);
-      })
-      .catch(err => {
-        toast.error(
-          "Error creating survey: " + err?.response?.data?.message ||
-            err?.response?.data
-        );
-      });
+    let ques = [];
+    console.log(requestBody.questions);
+    for(var i in requestBody.questions){
+      // let q = {
+      //   ...wz,
+      //   id: String(++i),
+      // };
+      let wz = requestBody.questions[i];
+      console.log(wz);
+      wz["id"] = String(++i);
+      ques.push(wz);
+    }
+
+    let surveycreatedata = {
+      desc : requestBody.title,
+      questions : ques,
+      participants : [],
+      stake : []
+    };
+
+    let actor = getAuthenticatedDeSu();
+    if(actor == null){
+      alert("Session expired, login again");
+      history.push(URL_LOGIN);
+    }
+    actor.createSurveyRecord(surveycreatedata).then(() => {
+      console.log("Created Survey!");
+      history.push(URL_ROOT);
+    });
+    console.log(surveycreatedata);
+
+    // api
+    //   .post("/surveys", requestBody)
+    //   .then(() => {
+    //     toast.success("☑ Survey created successfuly!");
+    //     history.push(URL_ROOT);
+    //   })
+    //   .catch(err => {
+    //     toast.error(
+    //       "Error creating survey: " + err?.response?.data?.message ||
+    //         err?.response?.data
+    //     );
+    //   });
   };
 
   return (

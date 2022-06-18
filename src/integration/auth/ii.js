@@ -4,7 +4,7 @@ import { Actor, HttpAgent } from "@dfinity/agent";
 import { AuthClient } from "@dfinity/auth-client";
 
 var authClient;
-var desuapp;
+export var desuapp;
 const canisterId = process.env.REACT_APP_DESU_CANISTER_ID;
 
 export const startAuthflow = async () => {
@@ -26,9 +26,25 @@ export const startAuthflow = async () => {
 
 export const getAuthenticatedDeSu = () => {
     if(desuapp) return desuapp; // Returned Cached version
+    if(!authClient) return null;
 
     const identity = authClient.getIdentity();
     const agent = new HttpAgent({ identity });
+    agent.fetchRootKey();
+    desuapp = Actor.createActor(idlFactory, {
+        agent,
+        canisterId: canisterId,
+    });
+    return desuapp;
+};
+
+
+export const getNormalDeSu = async () => {
+    if(desuapp) return desuapp; // Returned Cached version
+    let authClient = await AuthClient.create();
+    const identity = authClient.getIdentity();
+    const agent = new HttpAgent({ identity });
+    agent.fetchRootKey();
     desuapp = Actor.createActor(idlFactory, {
         agent,
         canisterId: canisterId,

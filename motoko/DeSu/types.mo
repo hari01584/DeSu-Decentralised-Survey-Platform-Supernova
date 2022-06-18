@@ -1,7 +1,8 @@
 module {
     public type QuestionData = {
         id : Text;
-        text : Text;
+        title : Text;
+        options : [Text];
     };
 
     public type SurveyCreateData = {
@@ -12,30 +13,38 @@ module {
     };
 
     public type AnswerUnit = {
-        qid : Text;
-        ans : Text;
+        question : Text;
+        answer : Text;
     };
 
     public type AnswerData = {
-        id : Text;
-        owner : Principal;
-        ans : [AnswerUnit];
+        survey : Text;
+        answers : [AnswerUnit];
     };
 
+    public type AnswerDataStore = {
+        id: Text;
+        survey : Text;
+        user : Principal;
+        answers : [AnswerUnit];
+    };
+    
     public type Survey = {
         id : Text;
         owner : Principal;
+        closed : Bool;
         data : SurveyCreateData;
-        answers : [AnswerData];
+        answers : [AnswerDataStore];
     };
 
     /*
         types for user data
     */
-    public type Country = {#US; #INDIA; #NIGERIA; #JAPAN};
+    public type Country = Text;
     public type Age = Int;
 
     public type UserDemographicInput = {
+        name : Text;
         country : Country;
         age : Age;
     };

@@ -34,44 +34,33 @@ type SurveyCreateData =
  };
 type Survey = 
  record {
-   answers: vec AnswerDataStore;
-   closed: bool;
+   answers: vec AnswerData;
    data: SurveyCreateData;
    id: text;
    owner: principal;
  };
 type QuestionData = 
  record {
-   id: text;
    options: vec text;
    title: text;
  };
 type Country = text;
 type AnswerUnit = 
  record {
-   answer: text;
-   question: text;
- };
-type AnswerDataStore = 
- record {
-   answers: vec AnswerUnit;
-   id: text;
-   survey: text;
-   user: principal;
+   ans: text;
+   qid: text;
  };
 type AnswerData = 
  record {
-   answers: vec AnswerUnit;
-   survey: text;
+   ans: vec AnswerUnit;
+   id: text;
+   owner: principal;
  };
 type Age = int;
 service : {
   createDemographicRecord: (UserDemographicInput) -> ();
   createSurveyRecord: (SurveyCreateData) -> (text);
-  fetchAllAnswers: () -> (vec vec AnswerDataStore) query;
-  fetchAllAnswersFor: (text) -> (opt vec AnswerDataStore) query;
-  fetchAnswerResult: (text) -> (Survey, opt vec AnswerDataStore,
-   opt UserDemographic) query;
+  fetchAllAnswersFor: (text) -> (vec AnswerData) query;
   fetchDemographicRecord: () -> (opt UserDemographic) query;
   getAllSurveys: () -> (vec record {
                               opt UserDemographic;
@@ -82,6 +71,5 @@ service : {
   greet: () -> (text) query;
   init: () -> ();
   insertAnswerFor: (text, AnswerData) -> (bool);
-  setSurveyStatus: (text, bool) -> ();
   whoami: () -> (principal) query;
 }

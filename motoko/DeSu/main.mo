@@ -12,8 +12,11 @@ import Cycles "mo:base/ExperimentalCycles";
 
 import Error "mo:base/Error";
 import Map "mo:base/HashMap";
+import Iter "mo:base/Iter";
+import Buffer "mo:base/Buffer";
 
 import Text "mo:base/Text";
+import Nat "mo:base/Nat";
 
 actor {
   var isInit : Bool = false;
@@ -61,7 +64,8 @@ actor {
   */
 
   // Survey HashMap (TODO: Make it stable and persistent)
-  let surveys = Map.HashMap<Text, T.Survey>(0, Text.equal, Text.hash);
+  var surveys = Map.HashMap<Text, T.Survey>(0, Text.equal, Text.hash);
+  let answers = Map.HashMap<Text, [T.AnswerDataStore]>(0, Text.equal, Text.hash);
 
   public shared(msg) func createSurveyRecord(record : T.SurveyCreateData) : async Text {
     // TODO: Logic for checking if user wallet contains enough balance for staking
@@ -89,18 +93,86 @@ actor {
       case (?z) return z;
     };
   };
-
-  public func insertAnswerFor(id : Text, answer : T.AnswerData) : async Bool {
-    // TODO: fetch from survey record and insert answer
-    // Also insert checks to make sure answer and question structure match
-    return false;
+  
+  public query func getAllSurveys() : async [(?T.UserDemographic, T.Survey)] {
+      let b = Buffer.Buffer<(?T.UserDemographic, T.Survey)>(0);
+      for ((p, v) in surveys.entries()) {
+        b.add((userData.get(v.owner), v));
+      };
+      return b.toArray();
   };
 
-  public query func fetchAllAnswersFor(id : Text) : async [T.AnswerData] {
-    // TODO: fetch all answers
-    return [];
+  public shared(msg) func insertAnswerFor(sid : Text, answer : T.AnswerData) : async Bool {
+    let uid : Text = await U.generateTextRandom();
+    
+    let answerstore : T.AnswerDataStore = {
+      id: Text = uid;
+      survey: Text = sid;
+      user = msg.caller;
+      answers: [T.AnswerUnit] = answer.answers;
+    };
+
+    switch (answers.get(sid)) {
+      case null {
+        answers.put(sid, [answerstore]);
+      };
+      case (?z){
+        D.print("Appending new to answers, init l "#Nat.toText(answers.size()));
+        let buf : Buffer.Buffer<T.AnswerDataStore> = Buffer.Buffer<T.AnswerDataStore>(0);
+        for (item in z.vals()) {
+          buf.add(item);
+        };
+        buf.add(answerstore);
+        answers.put(sid, buf.toArray());
+        D.print("done answers, final l "#Nat.toText(answers.size()));
+      }
+    };
+
+    return true;
   };
 
+  public shared(msg) func setSurveyStatus(sid: Text, isClosed: Bool) : async (){
+    switch (surveys.get(sid)) {
+      case null throw Error.reject("Not Found");
+      case (?z){
+        assert (msg.caller == z.owner);  // Only allow owner to close survey
+        let r : T.Survey = {
+          id = z.id;
+          owner = z.owner;
+          closed = isClosed;
+          data = z.data;
+          answers = z.answers;
+        };
+        surveys.put(sid, r);
+      };
+    };
+  };
+
+  public query func fetchAnswerResult(sid : Text) : async (T.Survey, ?[T.AnswerDataStore], ?T.UserDemographic) {
+    let surveyrec : T.Survey = switch (surveys.get(sid)) {
+      case null throw Error.reject("Not Found");
+      case (?z) z;
+    };
+    let myanswers : ?[T.AnswerDataStore] = answers.get(sid);
+    let myuserdata : ?T.UserDemographic = userData.get(surveyrec.owner);
+    return (
+      surveyrec,
+      myanswers,
+      myuserdata
+    );
+  };
+
+  public query func fetchAllAnswersFor(id : Text) : async ?[T.AnswerDataStore] {
+    return answers.get(id);
+  };
+
+  public query func fetchAllAnswers() : async [[T.AnswerDataStore]] {
+      let b = Buffer.Buffer<[T.AnswerDataStore]>(0);
+      for ((p, v) in answers.entries()) {
+        b.add(v);
+      };
+      return b.toArray();
+  };
 
   /*
     Wallet/Personal Data Collection.

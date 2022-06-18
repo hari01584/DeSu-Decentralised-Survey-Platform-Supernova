@@ -10,6 +10,7 @@ import axiosInstance from "../../services/api";
 import { URL_ROOT, URL_REGISTER } from "../../utils/constants";
 
 import { startAuthflow, getAuthenticatedDeSu } from "../../integration/auth/ii";
+import { demoToUser } from "../../integration/auth/demographic";
 // import { AuthClient } from "@dfinity/auth-client";
 
 export default function SignIn({ history }) {
@@ -19,14 +20,51 @@ export default function SignIn({ history }) {
   const [error, setError] = useState();
 
   const login = async (email, password) => {
-    console.log("Hows it going");
-
-    let r = await startAuthflow(); // Start login
-    console.log(r);
-    console.log("Are we hrere");
-
     let actor = getAuthenticatedDeSu();
+    if(!actor){
+      let r = await startAuthflow();
+      actor = getAuthenticatedDeSu();
+    }
+
+    console.log(await actor.whoami());
+
+    console.log("data get");
     console.log(actor);
+
+    // let create = await actor.createDemographicRecord({age: 17, country: "INDIA", name: "Idk"});
+    // console.log(create);
+
+    let userdemographic = await actor.fetchDemographicRecord();
+    if(userdemographic.length == 0){
+      // ie no demographic record, register user now
+      const name = prompt('Please enter your name');
+      const age = parseInt(prompt('Please enter your age'));
+      const country = prompt('Please enter your country');
+      let create = await actor.createDemographicRecord({age: age, country: country, name: name});
+      console.log(create);
+    }
+
+    userdemographic = await actor.fetchDemographicRecord();
+    console.log(userdemographic);
+
+    let res = userdemographic[0];
+
+    let user = demoToUser(res);
+
+    const userData = {
+      ...user,
+      isLoggedIn: true,
+      data: user,
+      // token: response.data.token
+    };
+
+    console.log(userData);
+
+    setUser(userData);
+
+    localStorage.setItem("user", JSON.stringify(userData));
+
+    history.push(URL_ROOT);
   };
 
   const handleKeyPress = event => {
@@ -44,10 +82,10 @@ export default function SignIn({ history }) {
         <SizedBox height="20px" />
         <Buttons>
           <Button onClick={() => login(email, password)}>Sign In</Button>
-          <SizedBox height="20px" />
+          {/* <SizedBox height="20px" />
           <Button onClick={() => history.push(URL_REGISTER)} color="purple">
             Create Account
-          </Button>
+          </Button> */}
         </Buttons>
       </Card>
     </Container>

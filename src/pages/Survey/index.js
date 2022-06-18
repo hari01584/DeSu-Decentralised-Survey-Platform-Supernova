@@ -13,7 +13,8 @@ import bermuda_welcome from "../../assets/img/bermuda-welcome.png";
 import api from "../../services/api";
 import AuthContext from "../../contexts/auth";
 import { toast } from "react-toastify";
-import { URL_ROOT, URL_SURVEYS, URL_SURVEY } from "../../utils/constants";
+import { URL_ROOT, URL_SURVEYS, URL_SURVEY, URL_LOGIN } from "../../utils/constants";
+import { startAuthflow, getAuthenticatedDeSu } from "../../integration/auth/ii";
 
 export default function Survey({ history, match }) {
   const [selections, setSelections] = useState({});
@@ -23,15 +24,42 @@ export default function Survey({ history, match }) {
   const { user } = useContext(AuthContext);
   const fetchData = () => {
     setIsLoading(true);
-    api
-      .get(`/surveys/${match.params.surveyId}`)
-      .then(response => {
-        setIsLoading(false);
-        setData(response.data);
-      })
-      .catch(({ response }) => {
-        setIsLoading(false);
-      });
+
+    let actor = getAuthenticatedDeSu();
+    if(actor == null){
+      alert("Session expired, login again");
+      history.push(URL_LOGIN);
+    }
+    actor.getSurveyRecord(match.params.surveyId).then((entry) => {
+      console.log("Record!");
+      console.log(entry);
+
+      let s = {
+        id: entry.id,
+        title: entry.data.desc,
+        description: "",
+        questions: entry.data.questions,
+        status: entry.closed ? "CLOSED" : "ACTIVE",
+        createdBy: null
+      };
+      console.log("Question");
+      console.log(s);
+
+      setData(s);
+      setIsLoading(false);
+    }).catch(()=>{
+      setIsLoading(false);
+    });
+
+    // api
+    //   .get(`/surveys/${match.params.surveyId}`)
+    //   .then(response => {
+    //     setIsLoading(false);
+    //     setData(response.data);
+    //   })
+    //   .catch(({ response }) => {
+    //     setIsLoading(false);
+    //   });
   };
   useEffect(fetchData, [user]);
 
@@ -61,22 +89,34 @@ export default function Survey({ history, match }) {
       answers: []
     };
 
+    var i = 0;
     requestBody.answers = Object.entries(selections).map(
       ([question, answer]) => ({
         question,
         answer
       })
     );
+    
+    let actor = getAuthenticatedDeSu();
+    if(actor == null){
+      alert("Session expired, login again");
+      history.push(URL_LOGIN);
+    }
+    actor.insertAnswerFor(requestBody.survey, requestBody).then((stat)=>{
+      console.log(stat);
+    });
 
-    api
-      .post("/entries", requestBody)
-      .then(() => {
-        toast.success("☑ Survey submitted successfuly!");
-        history.push(URL_ROOT);
-      })
-      .catch(err => {
-        toast.error("Error submiting survey: " + err?.response?.data?.message);
-      });
+    toast.success("☑ Survey submitted successfuly!");
+    history.push(URL_ROOT);
+    // api
+    //   .post("/entries", requestBody)
+    //   .then(() => {
+    //     toast.success("☑ Survey submitted successfuly!");
+    //     history.push(URL_ROOT);
+    //   })
+    //   .catch(err => {
+    //     toast.error("Error submiting survey: " + err?.response?.data?.message);
+    //   });
   };
 
   return (

@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
+import { getNormalDeSu, getAuthenticatedDeSu } from "../../integration/auth/ii";
 
 import {
   Container,
@@ -15,6 +16,7 @@ import AuthContext from "../../contexts/auth";
 import VectorContainer from "../../components/VectorContainer";
 import empty_list from "../../assets/img/mirage-list-is-empty.png";
 import { CLOSED, IDLE, ACTIVE } from '../../utils/constants';
+import { demoToUser } from "../../integration/auth/demographic";
 
 export default function Surveys() {
   const [loading, setLoading] = useState(true);
@@ -24,17 +26,41 @@ export default function Surveys() {
   const { user } = useContext(AuthContext);
 
   const fetchData = () => {
-    axiosInstace
-      .get("/surveys/")
-      .then(response => {
+    getNormalDeSu().then((actor)=>{
+      console.log(actor);
+      actor.getAllSurveys().then((data)=>{
+        let survey = [];
+        for(let i in data){
+          var userdemo = data[i][0];
+          var entry = data[i][1];
+          let s = {
+            id: entry.id,
+            title: entry.data.desc,
+            description: "",
+            questions: entry.data.questions,
+            status: entry.closed ? "CLOSED" : "ACTIVE",
+            createdBy: demoToUser(userdemo[0])
+          };
+          console.log(s);
+          survey.push(s);
+        }
         setLoading(false);
-        setClosedSurveys(response?.data?.filter(s => s.status === CLOSED));
-        setOpenSurveys(response?.data?.filter(s => s.status === ACTIVE));
-        setIdleSurveys(response?.data?.filter(s => s.status === IDLE));
-      })
-      .catch(({ response }) => {
-        setLoading(false);
+        setOpenSurveys(survey.filter(s => s.status === "ACTIVE"));
+        setClosedSurveys(survey.filter(s => s.status === "CLOSED"));
       });
+    });
+    // axiosInstace
+    //   .get("/surveys/")
+    //   .then(response => {
+    //     setLoading(false);
+    //     setClosedSurveys(response?.data?.filter(s => s.status === CLOSED));
+    //     setOpenSurveys(response?.data?.filter(s => s.status === ACTIVE));
+    //     setIdleSurveys(response?.data?.filter(s => s.status === IDLE));
+    //   })
+    //   .catch(({ response }) => {
+    //     setLoading(false);
+    //   });
+    
   };
 
   useEffect(fetchData, [user]);
