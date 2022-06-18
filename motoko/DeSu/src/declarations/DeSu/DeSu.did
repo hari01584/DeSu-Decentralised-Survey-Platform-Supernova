@@ -2,6 +2,7 @@ type UserDemographicInput =
  record {
    age: Age;
    country: Country;
+   name: text;
  };
 type UserDemographic = 
  record {
@@ -40,16 +41,10 @@ type Survey =
  };
 type QuestionData = 
  record {
-   id: text;
-   "text": text;
+   options: vec text;
+   title: text;
  };
-type Country = 
- variant {
-   INDIA;
-   JAPAN;
-   NIGERIA;
-   US;
- };
+type Country = text;
 type AnswerUnit = 
  record {
    ans: text;
@@ -67,6 +62,10 @@ service : {
   createSurveyRecord: (SurveyCreateData) -> (text);
   fetchAllAnswersFor: (text) -> (vec AnswerData) query;
   fetchDemographicRecord: () -> (opt UserDemographic) query;
+  getAllSurveys: () -> (vec record {
+                              opt UserDemographic;
+                              Survey;
+                            }) query;
   getSurveyRecord: (text) -> (Survey) query;
   getToken: () -> (Token);
   greet: () -> (text) query;

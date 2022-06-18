@@ -2,26 +2,19 @@ import type { Principal } from '@dfinity/principal';
 import type { ActorMethod } from '@dfinity/agent';
 
 export type Age = bigint;
-export interface AnswerData { 'answers' : Array<AnswerUnit>, 'survey' : string }
-export interface AnswerDataStore {
+export interface AnswerData {
   'id' : string,
-  'answers' : Array<AnswerUnit>,
-  'user' : Principal,
-  'survey' : string,
+  'ans' : Array<AnswerUnit>,
+  'owner' : Principal,
 }
-export interface AnswerUnit { 'question' : string, 'answer' : string }
+export interface AnswerUnit { 'ans' : string, 'qid' : string }
 export type Country = string;
-export interface QuestionData {
-  'id' : string,
-  'title' : string,
-  'options' : Array<string>,
-}
+export interface QuestionData { 'title' : string, 'options' : Array<string> }
 export interface Survey {
   'id' : string,
-  'closed' : boolean,
   'owner' : Principal,
   'data' : SurveyCreateData,
-  'answers' : Array<AnswerDataStore>,
+  'answers' : Array<AnswerData>,
 }
 export interface SurveyCreateData {
   'participants' : [] | [bigint],
@@ -56,12 +49,7 @@ export interface UserDemographicInput {
 export interface _SERVICE {
   'createDemographicRecord' : ActorMethod<[UserDemographicInput], undefined>,
   'createSurveyRecord' : ActorMethod<[SurveyCreateData], string>,
-  'fetchAllAnswers' : ActorMethod<[], Array<Array<AnswerDataStore>>>,
-  'fetchAllAnswersFor' : ActorMethod<[string], [] | [Array<AnswerDataStore>]>,
-  'fetchAnswerResult' : ActorMethod<
-    [string],
-    [Survey, [] | [Array<AnswerDataStore>], [] | [UserDemographic]],
-  >,
+  'fetchAllAnswersFor' : ActorMethod<[string], Array<AnswerData>>,
   'fetchDemographicRecord' : ActorMethod<[], [] | [UserDemographic]>,
   'getAllSurveys' : ActorMethod<[], Array<[[] | [UserDemographic], Survey]>>,
   'getSurveyRecord' : ActorMethod<[string], Survey>,
@@ -69,6 +57,5 @@ export interface _SERVICE {
   'greet' : ActorMethod<[], string>,
   'init' : ActorMethod<[], undefined>,
   'insertAnswerFor' : ActorMethod<[string, AnswerData], boolean>,
-  'setSurveyStatus' : ActorMethod<[string, boolean], undefined>,
   'whoami' : ActorMethod<[], Principal>,
 }

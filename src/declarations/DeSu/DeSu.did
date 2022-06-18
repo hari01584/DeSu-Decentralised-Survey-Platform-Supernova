@@ -2,6 +2,7 @@ type UserDemographicInput =
  record {
    age: Age;
    country: Country;
+   name: text;
  };
 type UserDemographic = 
  record {
@@ -33,7 +34,8 @@ type SurveyCreateData =
  };
 type Survey = 
  record {
-   answers: vec AnswerData;
+   answers: vec AnswerDataStore;
+   closed: bool;
    data: SurveyCreateData;
    id: text;
    owner: principal;
@@ -41,36 +43,45 @@ type Survey =
 type QuestionData = 
  record {
    id: text;
-   "text": text;
+   options: vec text;
+   title: text;
  };
-type Country = 
- variant {
-   INDIA;
-   JAPAN;
-   NIGERIA;
-   US;
- };
+type Country = text;
 type AnswerUnit = 
  record {
-   ans: text;
-   qid: text;
+   answer: text;
+   question: text;
+ };
+type AnswerDataStore = 
+ record {
+   answers: vec AnswerUnit;
+   id: text;
+   survey: text;
+   user: principal;
  };
 type AnswerData = 
  record {
-   ans: vec AnswerUnit;
-   id: text;
-   owner: principal;
+   answers: vec AnswerUnit;
+   survey: text;
  };
 type Age = int;
 service : {
   createDemographicRecord: (UserDemographicInput) -> ();
   createSurveyRecord: (SurveyCreateData) -> (text);
-  fetchAllAnswersFor: (text) -> (vec AnswerData) query;
+  fetchAllAnswers: () -> (vec vec AnswerDataStore) query;
+  fetchAllAnswersFor: (text) -> (opt vec AnswerDataStore) query;
+  fetchAnswerResult: (text) -> (Survey, opt vec AnswerDataStore,
+   opt UserDemographic) query;
   fetchDemographicRecord: () -> (opt UserDemographic) query;
+  getAllSurveys: () -> (vec record {
+                              opt UserDemographic;
+                              Survey;
+                            }) query;
   getSurveyRecord: (text) -> (Survey) query;
   getToken: () -> (Token);
   greet: () -> (text) query;
   init: () -> ();
   insertAnswerFor: (text, AnswerData) -> (bool);
+  setSurveyStatus: (text, bool) -> ();
   whoami: () -> (principal) query;
 }

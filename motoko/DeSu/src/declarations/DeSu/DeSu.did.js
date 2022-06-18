@@ -7,7 +7,6 @@ export const idlFactory = ({ IDL }) => {
     'name' : IDL.Text,
   });
   const QuestionData = IDL.Record({
-    'id' : IDL.Text,
     'title' : IDL.Text,
     'options' : IDL.Vec(IDL.Text),
   });
@@ -17,23 +16,21 @@ export const idlFactory = ({ IDL }) => {
     'stake' : IDL.Opt(IDL.Nat),
     'questions' : IDL.Vec(QuestionData),
   });
-  const AnswerUnit = IDL.Record({ 'question' : IDL.Text, 'answer' : IDL.Text });
-  const AnswerDataStore = IDL.Record({
+  const AnswerUnit = IDL.Record({ 'ans' : IDL.Text, 'qid' : IDL.Text });
+  const AnswerData = IDL.Record({
     'id' : IDL.Text,
-    'answers' : IDL.Vec(AnswerUnit),
-    'user' : IDL.Principal,
-    'survey' : IDL.Text,
-  });
-  const Survey = IDL.Record({
-    'id' : IDL.Text,
-    'closed' : IDL.Bool,
+    'ans' : IDL.Vec(AnswerUnit),
     'owner' : IDL.Principal,
-    'data' : SurveyCreateData,
-    'answers' : IDL.Vec(AnswerDataStore),
   });
   const UserDemographic = IDL.Record({
     'data' : UserDemographicInput,
     'user' : IDL.Principal,
+  });
+  const Survey = IDL.Record({
+    'id' : IDL.Text,
+    'owner' : IDL.Principal,
+    'data' : SurveyCreateData,
+    'answers' : IDL.Vec(AnswerData),
   });
   const Token = IDL.Service({
     'allowance' : IDL.Func(
@@ -62,26 +59,12 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
   });
-  const AnswerData = IDL.Record({
-    'answers' : IDL.Vec(AnswerUnit),
-    'survey' : IDL.Text,
-  });
   return IDL.Service({
     'createDemographicRecord' : IDL.Func([UserDemographicInput], [], []),
     'createSurveyRecord' : IDL.Func([SurveyCreateData], [IDL.Text], []),
-    'fetchAllAnswers' : IDL.Func(
-        [],
-        [IDL.Vec(IDL.Vec(AnswerDataStore))],
-        ['query'],
-      ),
     'fetchAllAnswersFor' : IDL.Func(
         [IDL.Text],
-        [IDL.Opt(IDL.Vec(AnswerDataStore))],
-        ['query'],
-      ),
-    'fetchAnswerResult' : IDL.Func(
-        [IDL.Text],
-        [Survey, IDL.Opt(IDL.Vec(AnswerDataStore)), IDL.Opt(UserDemographic)],
+        [IDL.Vec(AnswerData)],
         ['query'],
       ),
     'fetchDemographicRecord' : IDL.Func(
@@ -99,7 +82,6 @@ export const idlFactory = ({ IDL }) => {
     'greet' : IDL.Func([], [IDL.Text], ['query']),
     'init' : IDL.Func([], [], []),
     'insertAnswerFor' : IDL.Func([IDL.Text, AnswerData], [IDL.Bool], []),
-    'setSurveyStatus' : IDL.Func([IDL.Text, IDL.Bool], [], []),
     'whoami' : IDL.Func([], [IDL.Principal], ['query']),
   });
 };

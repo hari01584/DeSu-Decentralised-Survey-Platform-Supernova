@@ -38,7 +38,7 @@ const canisterEnvVariables = initCanisterEnv();
 
 const isDevelopment = process.env.NODE_ENV !== "production";
 
-const frontendDirectory = "www";
+const frontendDirectory = "hello_assets";
 
 const asset_entry = path.join("src", frontendDirectory, "src", "index.html");
 
@@ -75,17 +75,12 @@ module.exports = {
   // webpack configuration. For example, if you are using React
   // modules and CSS as described in the "Adding a stylesheet"
   // tutorial, uncomment the following lines:
-  // module: {
-  //  rules: [
-  //    { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
-  //    { test: /\.css$/, use: ['style-loader','css-loader'] }
-  //  ]
-  // },
   module: {
     rules: [
-      { test: /\.(js|ts)x?$/, loader: "ts-loader" }
-    ]
-  },  
+      { test: /\.(ts|tsx|jsx)$/, loader: "ts-loader" },
+      { test: /\.css$/, use: ["style-loader", "css-loader"] },
+    ],
+  },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(__dirname, asset_entry),
@@ -112,7 +107,7 @@ module.exports = {
   devServer: {
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:8000",
+        target: "http://localhost:8000",
         changeOrigin: true,
         pathRewrite: {
           "^/api": "/api",
