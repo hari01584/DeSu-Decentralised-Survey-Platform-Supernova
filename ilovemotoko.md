@@ -1,4 +1,4 @@
-### Some Useful Commands/Snippets Because I Really Hate Motoko
+### Some Useful Commands/Snippets Because I Really Love Motoko
 
 _Deposit to canister (local)_
 
