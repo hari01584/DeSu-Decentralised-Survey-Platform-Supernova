@@ -20,11 +20,13 @@ export default function SignIn({ history }) {
   const [error, setError] = useState();
 
   const login = async (email, password) => {
+    let r = await startAuthflow();
     let actor = getAuthenticatedDeSu();
-    if(!actor){
-      let r = await startAuthflow();
-      actor = getAuthenticatedDeSu();
-    }
+    // if(!actor){
+    //   console.log("Logging in");
+    //   let r = await startAuthflow();
+    //   actor = getAuthenticatedDeSu();
+    // }
 
     console.log(await actor.whoami());
 
