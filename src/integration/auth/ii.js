@@ -17,7 +17,7 @@ export const startAuthflow = async () => {
     authClient = await AuthClient.create();
     return new Promise((resolve, reject) => {
         authClient.login({
-            identityProvider: iiUrl,
+            // identityProvider: iiUrl,
             onSuccess: resolve,
             onError: reject,
         });
